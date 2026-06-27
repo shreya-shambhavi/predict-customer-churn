@@ -1,0 +1,4813 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "5cd5e3bf",
+   "metadata": {
+    "_cell_guid": "b1076dfc-b9ad-4769-8c92-a6c4dae69d19",
+    "_uuid": "8f2839f25d086af736a60e9eeb907d3b93b6e0e5",
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:32.674182Z",
+     "iopub.status.busy": "2026-06-27T15:10:32.672944Z",
+     "iopub.status.idle": "2026-06-27T15:10:33.792343Z",
+     "shell.execute_reply": "2026-06-27T15:10:33.791214Z"
+    },
+    "papermill": {
+     "duration": 1.138005,
+     "end_time": "2026-06-27T15:10:33.795544+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:32.657539+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "4faaf6f7",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:33.822098Z",
+     "iopub.status.busy": "2026-06-27T15:10:33.820777Z",
+     "iopub.status.idle": "2026-06-27T15:10:37.524301Z",
+     "shell.execute_reply": "2026-06-27T15:10:37.522784Z"
+    },
+    "papermill": {
+     "duration": 3.719046,
+     "end_time": "2026-06-27T15:10:37.526839+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:33.807793+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train_dataset = pd.read_csv(\"/kaggle/input/competitions/playground-series-s6e3/train.csv\")\n",
+    "test_dataset = pd.read_csv(\"/kaggle/input/competitions/playground-series-s6e3/test.csv\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "5a44bd04",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:37.554186Z",
+     "iopub.status.busy": "2026-06-27T15:10:37.553885Z",
+     "iopub.status.idle": "2026-06-27T15:10:37.992548Z",
+     "shell.execute_reply": "2026-06-27T15:10:37.991648Z"
+    },
+    "papermill": {
+     "duration": 0.455183,
+     "end_time": "2026-06-27T15:10:37.994620+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:37.539437+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>id</th>\n",
+       "      <th>gender</th>\n",
+       "      <th>SeniorCitizen</th>\n",
+       "      <th>Partner</th>\n",
+       "      <th>Dependents</th>\n",
+       "      <th>tenure</th>\n",
+       "      <th>PhoneService</th>\n",
+       "      <th>MultipleLines</th>\n",
+       "      <th>InternetService</th>\n",
+       "      <th>OnlineSecurity</th>\n",
+       "      <th>...</th>\n",
+       "      <th>DeviceProtection</th>\n",
+       "      <th>TechSupport</th>\n",
+       "      <th>StreamingTV</th>\n",
+       "      <th>StreamingMovies</th>\n",
+       "      <th>Contract</th>\n",
+       "      <th>PaperlessBilling</th>\n",
+       "      <th>PaymentMethod</th>\n",
+       "      <th>MonthlyCharges</th>\n",
+       "      <th>TotalCharges</th>\n",
+       "      <th>Churn</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>29</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>DSL</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>One year</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Mailed check</td>\n",
+       "      <td>60.10</td>\n",
+       "      <td>1653.85</td>\n",
+       "      <td>No</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>58</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>DSL</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Two year</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Credit card (automatic)</td>\n",
+       "      <td>69.50</td>\n",
+       "      <td>3778.20</td>\n",
+       "      <td>No</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>2</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>58</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Fiber optic</td>\n",
+       "      <td>No</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Month-to-month</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Electronic check</td>\n",
+       "      <td>100.40</td>\n",
+       "      <td>5841.35</td>\n",
+       "      <td>No</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>3</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Fiber optic</td>\n",
+       "      <td>No</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Month-to-month</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Electronic check</td>\n",
+       "      <td>69.70</td>\n",
+       "      <td>70.70</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>4</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Fiber optic</td>\n",
+       "      <td>No</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Month-to-month</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Electronic check</td>\n",
+       "      <td>70.45</td>\n",
+       "      <td>70.45</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>594189</th>\n",
+       "      <td>594189</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>57</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Fiber optic</td>\n",
+       "      <td>No</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Two year</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Bank transfer (automatic)</td>\n",
+       "      <td>97.55</td>\n",
+       "      <td>5460.70</td>\n",
+       "      <td>No</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>594190</th>\n",
+       "      <td>594190</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>72</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>DSL</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>...</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Two year</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Bank transfer (automatic)</td>\n",
+       "      <td>91.95</td>\n",
+       "      <td>6782.15</td>\n",
+       "      <td>No</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>594191</th>\n",
+       "      <td>594191</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>72</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>Two year</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Credit card (automatic)</td>\n",
+       "      <td>24.40</td>\n",
+       "      <td>1871.90</td>\n",
+       "      <td>No</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>594192</th>\n",
+       "      <td>594192</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>32</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Fiber optic</td>\n",
+       "      <td>No</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Month-to-month</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Electronic check</td>\n",
+       "      <td>86.00</td>\n",
+       "      <td>2847.20</td>\n",
+       "      <td>No</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>594193</th>\n",
+       "      <td>594193</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>2</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>DSL</td>\n",
+       "      <td>No</td>\n",
+       "      <td>...</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Month-to-month</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Electronic check</td>\n",
+       "      <td>54.55</td>\n",
+       "      <td>108.05</td>\n",
+       "      <td>Yes</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>594194 rows × 21 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "            id  gender  SeniorCitizen Partner Dependents  tenure PhoneService  \\\n",
+       "0            0    Male              0     Yes        Yes      29          Yes   \n",
+       "1            1    Male              0     Yes        Yes      58          Yes   \n",
+       "2            2    Male              0     Yes         No      58          Yes   \n",
+       "3            3  Female              0      No         No       1          Yes   \n",
+       "4            4  Female              0      No         No       1          Yes   \n",
+       "...        ...     ...            ...     ...        ...     ...          ...   \n",
+       "594189  594189    Male              0      No         No      57          Yes   \n",
+       "594190  594190  Female              0      No         No      72          Yes   \n",
+       "594191  594191  Female              0     Yes         No      72          Yes   \n",
+       "594192  594192  Female              0      No         No      32          Yes   \n",
+       "594193  594193  Female              1     Yes         No       2          Yes   \n",
+       "\n",
+       "       MultipleLines InternetService       OnlineSecurity  ...  \\\n",
+       "0                 No             DSL                  Yes  ...   \n",
+       "1                 No             DSL                  Yes  ...   \n",
+       "2                Yes     Fiber optic                   No  ...   \n",
+       "3                 No     Fiber optic                   No  ...   \n",
+       "4                 No     Fiber optic                   No  ...   \n",
+       "...              ...             ...                  ...  ...   \n",
+       "594189           Yes     Fiber optic                   No  ...   \n",
+       "594190           Yes             DSL                  Yes  ...   \n",
+       "594191           Yes              No  No internet service  ...   \n",
+       "594192           Yes     Fiber optic                   No  ...   \n",
+       "594193            No             DSL                   No  ...   \n",
+       "\n",
+       "           DeviceProtection          TechSupport          StreamingTV  \\\n",
+       "0                       Yes                  Yes                   No   \n",
+       "1                        No                  Yes                  Yes   \n",
+       "2                        No                   No                  Yes   \n",
+       "3                        No                   No                   No   \n",
+       "4                        No                   No                   No   \n",
+       "...                     ...                  ...                  ...   \n",
+       "594189                  Yes                   No                  Yes   \n",
+       "594190                  Yes                  Yes                  Yes   \n",
+       "594191  No internet service  No internet service  No internet service   \n",
+       "594192                   No                   No                   No   \n",
+       "594193                   No                   No                  Yes   \n",
+       "\n",
+       "            StreamingMovies        Contract PaperlessBilling  \\\n",
+       "0                        No        One year              Yes   \n",
+       "1                        No        Two year               No   \n",
+       "2                       Yes  Month-to-month              Yes   \n",
+       "3                        No  Month-to-month              Yes   \n",
+       "4                        No  Month-to-month              Yes   \n",
+       "...                     ...             ...              ...   \n",
+       "594189                  Yes        Two year               No   \n",
+       "594190                  Yes        Two year               No   \n",
+       "594191  No internet service        Two year               No   \n",
+       "594192                  Yes  Month-to-month              Yes   \n",
+       "594193                   No  Month-to-month              Yes   \n",
+       "\n",
+       "                    PaymentMethod MonthlyCharges  TotalCharges  Churn  \n",
+       "0                    Mailed check          60.10       1653.85     No  \n",
+       "1         Credit card (automatic)          69.50       3778.20     No  \n",
+       "2                Electronic check         100.40       5841.35     No  \n",
+       "3                Electronic check          69.70         70.70    Yes  \n",
+       "4                Electronic check          70.45         70.45    Yes  \n",
+       "...                           ...            ...           ...    ...  \n",
+       "594189  Bank transfer (automatic)          97.55       5460.70     No  \n",
+       "594190  Bank transfer (automatic)          91.95       6782.15     No  \n",
+       "594191    Credit card (automatic)          24.40       1871.90     No  \n",
+       "594192           Electronic check          86.00       2847.20     No  \n",
+       "594193           Electronic check          54.55        108.05    Yes  \n",
+       "\n",
+       "[594194 rows x 21 columns]"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train_dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "3c1652cb",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:38.025523Z",
+     "iopub.status.busy": "2026-06-27T15:10:38.025029Z",
+     "iopub.status.idle": "2026-06-27T15:10:38.048457Z",
+     "shell.execute_reply": "2026-06-27T15:10:38.047168Z"
+    },
+    "papermill": {
+     "duration": 0.041045,
+     "end_time": "2026-06-27T15:10:38.050639+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:38.009594+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>id</th>\n",
+       "      <th>gender</th>\n",
+       "      <th>SeniorCitizen</th>\n",
+       "      <th>Partner</th>\n",
+       "      <th>Dependents</th>\n",
+       "      <th>tenure</th>\n",
+       "      <th>PhoneService</th>\n",
+       "      <th>MultipleLines</th>\n",
+       "      <th>InternetService</th>\n",
+       "      <th>OnlineSecurity</th>\n",
+       "      <th>OnlineBackup</th>\n",
+       "      <th>DeviceProtection</th>\n",
+       "      <th>TechSupport</th>\n",
+       "      <th>StreamingTV</th>\n",
+       "      <th>StreamingMovies</th>\n",
+       "      <th>Contract</th>\n",
+       "      <th>PaperlessBilling</th>\n",
+       "      <th>PaymentMethod</th>\n",
+       "      <th>MonthlyCharges</th>\n",
+       "      <th>TotalCharges</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>594194</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>72</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Fiber optic</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Two year</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Electronic check</td>\n",
+       "      <td>115.55</td>\n",
+       "      <td>8061.50</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>594195</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>71</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>Two year</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Bank transfer (automatic)</td>\n",
+       "      <td>19.80</td>\n",
+       "      <td>1336.50</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>594196</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>12</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>DSL</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Month-to-month</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Bank transfer (automatic)</td>\n",
+       "      <td>55.55</td>\n",
+       "      <td>633.55</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>594197</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>71</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>DSL</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Two year</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Credit card (automatic)</td>\n",
+       "      <td>84.10</td>\n",
+       "      <td>6457.15</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>594198</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>15</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Fiber optic</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Month-to-month</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Electronic check</td>\n",
+       "      <td>90.35</td>\n",
+       "      <td>1233.65</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>254650</th>\n",
+       "      <td>848844</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>72</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>Two year</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Credit card (automatic)</td>\n",
+       "      <td>19.95</td>\n",
+       "      <td>1443.65</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>254651</th>\n",
+       "      <td>848845</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>16</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Fiber optic</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Month-to-month</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Electronic check</td>\n",
+       "      <td>100.15</td>\n",
+       "      <td>1563.50</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>254652</th>\n",
+       "      <td>848846</td>\n",
+       "      <td>Male</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>35</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Fiber optic</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Month-to-month</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Bank transfer (automatic)</td>\n",
+       "      <td>105.80</td>\n",
+       "      <td>3132.75</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>254653</th>\n",
+       "      <td>848847</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>25</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>No internet service</td>\n",
+       "      <td>Two year</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Credit card (automatic)</td>\n",
+       "      <td>20.25</td>\n",
+       "      <td>511.25</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>254654</th>\n",
+       "      <td>848848</td>\n",
+       "      <td>Female</td>\n",
+       "      <td>0</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>24</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Fiber optic</td>\n",
+       "      <td>No</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>No</td>\n",
+       "      <td>Month-to-month</td>\n",
+       "      <td>Yes</td>\n",
+       "      <td>Credit card (automatic)</td>\n",
+       "      <td>90.10</td>\n",
+       "      <td>2172.05</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>254655 rows × 20 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "            id  gender  SeniorCitizen Partner Dependents  tenure PhoneService  \\\n",
+       "0       594194  Female              0     Yes         No      72          Yes   \n",
+       "1       594195  Female              0     Yes         No      71          Yes   \n",
+       "2       594196    Male              0      No         No      12          Yes   \n",
+       "3       594197    Male              0     Yes        Yes      71          Yes   \n",
+       "4       594198  Female              0      No         No      15          Yes   \n",
+       "...        ...     ...            ...     ...        ...     ...          ...   \n",
+       "254650  848844    Male              0     Yes        Yes      72          Yes   \n",
+       "254651  848845    Male              1     Yes         No      16          Yes   \n",
+       "254652  848846    Male              0     Yes         No      35          Yes   \n",
+       "254653  848847  Female              0      No         No      25          Yes   \n",
+       "254654  848848  Female              0      No         No      24          Yes   \n",
+       "\n",
+       "       MultipleLines InternetService       OnlineSecurity  \\\n",
+       "0                Yes     Fiber optic                  Yes   \n",
+       "1                 No              No  No internet service   \n",
+       "2                 No             DSL                  Yes   \n",
+       "3                Yes             DSL                  Yes   \n",
+       "4                 No     Fiber optic                  Yes   \n",
+       "...              ...             ...                  ...   \n",
+       "254650            No              No  No internet service   \n",
+       "254651           Yes     Fiber optic                   No   \n",
+       "254652           Yes     Fiber optic                  Yes   \n",
+       "254653            No              No  No internet service   \n",
+       "254654           Yes     Fiber optic                   No   \n",
+       "\n",
+       "               OnlineBackup     DeviceProtection          TechSupport  \\\n",
+       "0                       Yes                  Yes                  Yes   \n",
+       "1       No internet service  No internet service  No internet service   \n",
+       "2                       Yes                   No                   No   \n",
+       "3                        No                  Yes                  Yes   \n",
+       "4                        No                   No                   No   \n",
+       "...                     ...                  ...                  ...   \n",
+       "254650  No internet service  No internet service  No internet service   \n",
+       "254651                   No                   No                  Yes   \n",
+       "254652                   No                  Yes                  Yes   \n",
+       "254653  No internet service  No internet service  No internet service   \n",
+       "254654                   No                  Yes                   No   \n",
+       "\n",
+       "                StreamingTV      StreamingMovies        Contract  \\\n",
+       "0                       Yes                  Yes        Two year   \n",
+       "1       No internet service  No internet service        Two year   \n",
+       "2                        No                   No  Month-to-month   \n",
+       "3                       Yes                  Yes        Two year   \n",
+       "4                       Yes                  Yes  Month-to-month   \n",
+       "...                     ...                  ...             ...   \n",
+       "254650  No internet service  No internet service        Two year   \n",
+       "254651                  Yes                  Yes  Month-to-month   \n",
+       "254652                  Yes                  Yes  Month-to-month   \n",
+       "254653  No internet service  No internet service        Two year   \n",
+       "254654                  Yes                   No  Month-to-month   \n",
+       "\n",
+       "       PaperlessBilling              PaymentMethod  MonthlyCharges  \\\n",
+       "0                   Yes           Electronic check          115.55   \n",
+       "1                    No  Bank transfer (automatic)           19.80   \n",
+       "2                   Yes  Bank transfer (automatic)           55.55   \n",
+       "3                    No    Credit card (automatic)           84.10   \n",
+       "4                    No           Electronic check           90.35   \n",
+       "...                 ...                        ...             ...   \n",
+       "254650               No    Credit card (automatic)           19.95   \n",
+       "254651              Yes           Electronic check          100.15   \n",
+       "254652              Yes  Bank transfer (automatic)          105.80   \n",
+       "254653              Yes    Credit card (automatic)           20.25   \n",
+       "254654              Yes    Credit card (automatic)           90.10   \n",
+       "\n",
+       "        TotalCharges  \n",
+       "0            8061.50  \n",
+       "1            1336.50  \n",
+       "2             633.55  \n",
+       "3            6457.15  \n",
+       "4            1233.65  \n",
+       "...              ...  \n",
+       "254650       1443.65  \n",
+       "254651       1563.50  \n",
+       "254652       3132.75  \n",
+       "254653        511.25  \n",
+       "254654       2172.05  \n",
+       "\n",
+       "[254655 rows x 20 columns]"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "test_dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "a811e1fc",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:38.079039Z",
+     "iopub.status.busy": "2026-06-27T15:10:38.078647Z",
+     "iopub.status.idle": "2026-06-27T15:10:38.597859Z",
+     "shell.execute_reply": "2026-06-27T15:10:38.596352Z"
+    },
+    "papermill": {
+     "duration": 0.537341,
+     "end_time": "2026-06-27T15:10:38.601198+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:38.063857+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 594194 entries, 0 to 594193\n",
+      "Data columns (total 21 columns):\n",
+      " #   Column            Non-Null Count   Dtype  \n",
+      "---  ------            --------------   -----  \n",
+      " 0   id                594194 non-null  int64  \n",
+      " 1   gender            594194 non-null  object \n",
+      " 2   SeniorCitizen     594194 non-null  int64  \n",
+      " 3   Partner           594194 non-null  object \n",
+      " 4   Dependents        594194 non-null  object \n",
+      " 5   tenure            594194 non-null  int64  \n",
+      " 6   PhoneService      594194 non-null  object \n",
+      " 7   MultipleLines     594194 non-null  object \n",
+      " 8   InternetService   594194 non-null  object \n",
+      " 9   OnlineSecurity    594194 non-null  object \n",
+      " 10  OnlineBackup      594194 non-null  object \n",
+      " 11  DeviceProtection  594194 non-null  object \n",
+      " 12  TechSupport       594194 non-null  object \n",
+      " 13  StreamingTV       594194 non-null  object \n",
+      " 14  StreamingMovies   594194 non-null  object \n",
+      " 15  Contract          594194 non-null  object \n",
+      " 16  PaperlessBilling  594194 non-null  object \n",
+      " 17  PaymentMethod     594194 non-null  object \n",
+      " 18  MonthlyCharges    594194 non-null  float64\n",
+      " 19  TotalCharges      594194 non-null  float64\n",
+      " 20  Churn             594194 non-null  object \n",
+      "dtypes: float64(2), int64(3), object(16)\n",
+      "memory usage: 95.2+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "train_dataset.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "5745f0a9",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:38.632478Z",
+     "iopub.status.busy": "2026-06-27T15:10:38.631636Z",
+     "iopub.status.idle": "2026-06-27T15:10:38.842877Z",
+     "shell.execute_reply": "2026-06-27T15:10:38.841363Z"
+    },
+    "papermill": {
+     "duration": 0.230849,
+     "end_time": "2026-06-27T15:10:38.845646+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:38.614797+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 254655 entries, 0 to 254654\n",
+      "Data columns (total 20 columns):\n",
+      " #   Column            Non-Null Count   Dtype  \n",
+      "---  ------            --------------   -----  \n",
+      " 0   id                254655 non-null  int64  \n",
+      " 1   gender            254655 non-null  object \n",
+      " 2   SeniorCitizen     254655 non-null  int64  \n",
+      " 3   Partner           254655 non-null  object \n",
+      " 4   Dependents        254655 non-null  object \n",
+      " 5   tenure            254655 non-null  int64  \n",
+      " 6   PhoneService      254655 non-null  object \n",
+      " 7   MultipleLines     254655 non-null  object \n",
+      " 8   InternetService   254655 non-null  object \n",
+      " 9   OnlineSecurity    254655 non-null  object \n",
+      " 10  OnlineBackup      254655 non-null  object \n",
+      " 11  DeviceProtection  254655 non-null  object \n",
+      " 12  TechSupport       254655 non-null  object \n",
+      " 13  StreamingTV       254655 non-null  object \n",
+      " 14  StreamingMovies   254655 non-null  object \n",
+      " 15  Contract          254655 non-null  object \n",
+      " 16  PaperlessBilling  254655 non-null  object \n",
+      " 17  PaymentMethod     254655 non-null  object \n",
+      " 18  MonthlyCharges    254655 non-null  float64\n",
+      " 19  TotalCharges      254655 non-null  float64\n",
+      "dtypes: float64(2), int64(3), object(15)\n",
+      "memory usage: 38.9+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "test_dataset.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "8ada0425",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:38.876070Z",
+     "iopub.status.busy": "2026-06-27T15:10:38.875692Z",
+     "iopub.status.idle": "2026-06-27T15:10:38.961468Z",
+     "shell.execute_reply": "2026-06-27T15:10:38.960376Z"
+    },
+    "papermill": {
+     "duration": 0.102998,
+     "end_time": "2026-06-27T15:10:38.963789+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:38.860791+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train = train_dataset.copy()\n",
+    "test = test_dataset.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "6cac7fa7",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:38.993996Z",
+     "iopub.status.busy": "2026-06-27T15:10:38.992945Z",
+     "iopub.status.idle": "2026-06-27T15:10:39.184681Z",
+     "shell.execute_reply": "2026-06-27T15:10:39.183552Z"
+    },
+    "papermill": {
+     "duration": 0.209142,
+     "end_time": "2026-06-27T15:10:39.186947+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:38.977805+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train = train.drop(columns = [\"id\"])\n",
+    "test = test.drop(columns = [\"id\"])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "a17c8901",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:39.215342Z",
+     "iopub.status.busy": "2026-06-27T15:10:39.214102Z",
+     "iopub.status.idle": "2026-06-27T15:10:39.301772Z",
+     "shell.execute_reply": "2026-06-27T15:10:39.300653Z"
+    },
+    "papermill": {
+     "duration": 0.104631,
+     "end_time": "2026-06-27T15:10:39.303694+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:39.199063+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         2\n",
+       "top       Female\n",
+       "freq      298738\n",
+       "Name: gender, dtype: object"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['gender'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "e759374e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:39.334308Z",
+     "iopub.status.busy": "2026-06-27T15:10:39.333490Z",
+     "iopub.status.idle": "2026-06-27T15:10:39.370766Z",
+     "shell.execute_reply": "2026-06-27T15:10:39.369354Z"
+    },
+    "papermill": {
+     "duration": 0.056576,
+     "end_time": "2026-06-27T15:10:39.373062+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:39.316486+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Male', 'Female'], dtype=object)"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['gender'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "432ea87c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:39.402094Z",
+     "iopub.status.busy": "2026-06-27T15:10:39.400991Z",
+     "iopub.status.idle": "2026-06-27T15:10:39.458137Z",
+     "shell.execute_reply": "2026-06-27T15:10:39.457167Z"
+    },
+    "papermill": {
+     "duration": 0.073886,
+     "end_time": "2026-06-27T15:10:39.460052+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:39.386166+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "gender\n",
+       "Female    298738\n",
+       "Male      295456\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['gender'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "daa6a62a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:39.491173Z",
+     "iopub.status.busy": "2026-06-27T15:10:39.490881Z",
+     "iopub.status.idle": "2026-06-27T15:10:39.599752Z",
+     "shell.execute_reply": "2026-06-27T15:10:39.598757Z"
+    },
+    "papermill": {
+     "duration": 0.126829,
+     "end_time": "2026-06-27T15:10:39.601930+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:39.475101+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train = train.rename(columns = {'gender': 'Gender'})\n",
+    "test = test.rename(columns = {'gender': 'Gender'})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "b5ad4eaa",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:39.631050Z",
+     "iopub.status.busy": "2026-06-27T15:10:39.630764Z",
+     "iopub.status.idle": "2026-06-27T15:10:39.692041Z",
+     "shell.execute_reply": "2026-06-27T15:10:39.691031Z"
+    },
+    "papermill": {
+     "duration": 0.079374,
+     "end_time": "2026-06-27T15:10:39.694353+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:39.614979+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['Gender'] = train['Gender'].map({'Male': 0, 'Female': 1})\n",
+    "test['Gender'] = test['Gender'].map({'Male': 0, 'Female': 1})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "b68ca029",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:39.723658Z",
+     "iopub.status.busy": "2026-06-27T15:10:39.723350Z",
+     "iopub.status.idle": "2026-06-27T15:10:39.751769Z",
+     "shell.execute_reply": "2026-06-27T15:10:39.750608Z"
+    },
+    "papermill": {
+     "duration": 0.045887,
+     "end_time": "2026-06-27T15:10:39.753683+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:39.707796+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count    594194.000000\n",
+       "mean          0.114102\n",
+       "std           0.317936\n",
+       "min           0.000000\n",
+       "25%           0.000000\n",
+       "50%           0.000000\n",
+       "75%           0.000000\n",
+       "max           1.000000\n",
+       "Name: SeniorCitizen, dtype: float64"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['SeniorCitizen'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "9e90702b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:39.782119Z",
+     "iopub.status.busy": "2026-06-27T15:10:39.781007Z",
+     "iopub.status.idle": "2026-06-27T15:10:39.795110Z",
+     "shell.execute_reply": "2026-06-27T15:10:39.794094Z"
+    },
+    "papermill": {
+     "duration": 0.030667,
+     "end_time": "2026-06-27T15:10:39.797113+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:39.766446+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0, 1])"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['SeniorCitizen'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "1231a14e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:39.827153Z",
+     "iopub.status.busy": "2026-06-27T15:10:39.825943Z",
+     "iopub.status.idle": "2026-06-27T15:10:39.840355Z",
+     "shell.execute_reply": "2026-06-27T15:10:39.839327Z"
+    },
+    "papermill": {
+     "duration": 0.032809,
+     "end_time": "2026-06-27T15:10:39.842835+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:39.810026+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "SeniorCitizen\n",
+       "0    526395\n",
+       "1     67799\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['SeniorCitizen'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "14553a81",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:39.871184Z",
+     "iopub.status.busy": "2026-06-27T15:10:39.870135Z",
+     "iopub.status.idle": "2026-06-27T15:10:39.956786Z",
+     "shell.execute_reply": "2026-06-27T15:10:39.955939Z"
+    },
+    "papermill": {
+     "duration": 0.103083,
+     "end_time": "2026-06-27T15:10:39.958777+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:39.855694+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         2\n",
+       "top          Yes\n",
+       "freq      309554\n",
+       "Name: Partner, dtype: object"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Partner'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "7d49d64b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:39.990092Z",
+     "iopub.status.busy": "2026-06-27T15:10:39.989615Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.028420Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.027057Z"
+    },
+    "papermill": {
+     "duration": 0.058241,
+     "end_time": "2026-06-27T15:10:40.030904+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:39.972663+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Yes', 'No'], dtype=object)"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Partner'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "ab6a73e6",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.061387Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.060919Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.118059Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.117084Z"
+    },
+    "papermill": {
+     "duration": 0.074431,
+     "end_time": "2026-06-27T15:10:40.119970+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.045539+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Partner\n",
+       "Yes    309554\n",
+       "No     284640\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Partner'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "7ae4ed4d",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.149248Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.148918Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.208422Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.207496Z"
+    },
+    "papermill": {
+     "duration": 0.07727,
+     "end_time": "2026-06-27T15:10:40.210473+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.133203+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['Partner'] = train['Partner'].map({'Yes': 1, 'No': 0})\n",
+    "test['Partner'] = test['Partner'].map({'Yes': 1, 'No': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "242ca262",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.238673Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.238145Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.327817Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.326497Z"
+    },
+    "papermill": {
+     "duration": 0.107226,
+     "end_time": "2026-06-27T15:10:40.330891+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.223665+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         2\n",
+       "top           No\n",
+       "freq      414362\n",
+       "Name: Dependents, dtype: object"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Dependents'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "aa7e1467",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.361602Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.360788Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.394897Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.393577Z"
+    },
+    "papermill": {
+     "duration": 0.052377,
+     "end_time": "2026-06-27T15:10:40.397551+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.345174+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Yes', 'No'], dtype=object)"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Dependents'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "c7c53a4b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.427675Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.427201Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.484774Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.483732Z"
+    },
+    "papermill": {
+     "duration": 0.075253,
+     "end_time": "2026-06-27T15:10:40.486600+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.411347+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Dependents\n",
+       "No     414362\n",
+       "Yes    179832\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Dependents'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "35f8e6ee",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.517460Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.517058Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.581255Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.579667Z"
+    },
+    "papermill": {
+     "duration": 0.082901,
+     "end_time": "2026-06-27T15:10:40.584002+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.501101+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['Dependents'] = train['Dependents'].map({'Yes': 1, 'No': 0})\n",
+    "test['Dependents'] = test['Dependents'].map({'Yes': 1, 'No': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "c74f295e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.616084Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.615768Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.646621Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.645127Z"
+    },
+    "papermill": {
+     "duration": 0.050545,
+     "end_time": "2026-06-27T15:10:40.649175+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.598630+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count    594194.000000\n",
+       "mean         36.577258\n",
+       "std          25.061922\n",
+       "min           1.000000\n",
+       "25%          12.000000\n",
+       "50%          35.000000\n",
+       "75%          62.000000\n",
+       "max          72.000000\n",
+       "Name: tenure, dtype: float64"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['tenure'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "f7219b41",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.681718Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.681357Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.693330Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.691814Z"
+    },
+    "papermill": {
+     "duration": 0.031329,
+     "end_time": "2026-06-27T15:10:40.695517+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.664188+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([29, 58,  1, 24, 72, 55, 13, 67, 33, 63,  3, 31, 27, 52, 68, 35, 66,\n",
+       "       17, 59, 61, 12, 37, 64, 23,  9,  8, 15, 18, 19, 51,  5, 71, 60, 62,\n",
+       "       45, 69, 40, 53, 54, 34,  2, 70, 39, 41,  4, 22, 46, 28, 42, 48, 21,\n",
+       "       43, 14, 10, 47,  7, 57, 36, 16, 26, 20, 50, 30, 11, 44, 25, 56,  6,\n",
+       "       65, 38, 49, 32])"
+      ]
+     },
+     "execution_count": 26,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['tenure'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "4a8cebd9",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.726221Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.725911Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.740696Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.739434Z"
+    },
+    "papermill": {
+     "duration": 0.032722,
+     "end_time": "2026-06-27T15:10:40.743026+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.710304+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "tenure\n",
+       "72    56411\n",
+       "1     29182\n",
+       "71    20763\n",
+       "2     16766\n",
+       "3     13478\n",
+       "      ...  \n",
+       "40     4203\n",
+       "21     3862\n",
+       "44     3496\n",
+       "39     3396\n",
+       "36     2562\n",
+       "Name: count, Length: 72, dtype: int64"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['tenure'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "id": "93e653b7",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.772717Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.772417Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.892449Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.891376Z"
+    },
+    "papermill": {
+     "duration": 0.137527,
+     "end_time": "2026-06-27T15:10:40.894605+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.757078+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train = train.rename(columns = {'tenure': 'Tenure'})\n",
+    "test = test.rename(columns = {'tenure': 'Tenure'})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "id": "0f0b3f96",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:40.924061Z",
+     "iopub.status.busy": "2026-06-27T15:10:40.923751Z",
+     "iopub.status.idle": "2026-06-27T15:10:40.975853Z",
+     "shell.execute_reply": "2026-06-27T15:10:40.974462Z"
+    },
+    "papermill": {
+     "duration": 0.070087,
+     "end_time": "2026-06-27T15:10:40.978185+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.908098+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "bins = [0, 12, 24, 36, 48, 60, 72]\n",
+    "labels = [1, 2, 3, 4, 5, 6]\n",
+    "\n",
+    "train['Tenure'] = pd.cut(train['Tenure'], bins = bins, labels = labels)\n",
+    "test['Tenure'] = pd.cut(test['Tenure'], bins = bins, labels = labels)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "id": "872892fa",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.009344Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.008833Z",
+     "iopub.status.idle": "2026-06-27T15:10:41.100832Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.099795Z"
+    },
+    "papermill": {
+     "duration": 0.110892,
+     "end_time": "2026-06-27T15:10:41.102774+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:40.991882+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         2\n",
+       "top          Yes\n",
+       "freq      557893\n",
+       "Name: PhoneService, dtype: object"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['PhoneService'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "id": "8d133d06",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.133912Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.133519Z",
+     "iopub.status.idle": "2026-06-27T15:10:41.169007Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.167437Z"
+    },
+    "papermill": {
+     "duration": 0.054384,
+     "end_time": "2026-06-27T15:10:41.171532+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:41.117148+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Yes', 'No'], dtype=object)"
+      ]
+     },
+     "execution_count": 31,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['PhoneService'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "id": "e9b0605c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.203513Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.203097Z",
+     "iopub.status.idle": "2026-06-27T15:10:41.258002Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.256796Z"
+    },
+    "papermill": {
+     "duration": 0.073733,
+     "end_time": "2026-06-27T15:10:41.260405+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:41.186672+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "PhoneService\n",
+       "Yes    557893\n",
+       "No      36301\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 32,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['PhoneService'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "id": "a31acc18",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.291175Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.290453Z",
+     "iopub.status.idle": "2026-06-27T15:10:41.352110Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.351021Z"
+    },
+    "papermill": {
+     "duration": 0.081341,
+     "end_time": "2026-06-27T15:10:41.355251+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:41.273910+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['PhoneService'] = train['PhoneService'].map({'Yes': 1, 'No': 0})\n",
+    "test['PhoneService'] = test['PhoneService'].map({'Yes': 1, 'No': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "id": "64ee448a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.386335Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.385881Z",
+     "iopub.status.idle": "2026-06-27T15:10:41.474720Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.473135Z"
+    },
+    "papermill": {
+     "duration": 0.107363,
+     "end_time": "2026-06-27T15:10:41.476855+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:41.369492+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         3\n",
+       "top           No\n",
+       "freq      283384\n",
+       "Name: MultipleLines, dtype: object"
+      ]
+     },
+     "execution_count": 34,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['MultipleLines'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "id": "10d32786",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.506018Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.505637Z",
+     "iopub.status.idle": "2026-06-27T15:10:41.542364Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.540965Z"
+    },
+    "papermill": {
+     "duration": 0.054294,
+     "end_time": "2026-06-27T15:10:41.544972+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:41.490678+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['No', 'Yes', 'No phone service'], dtype=object)"
+      ]
+     },
+     "execution_count": 35,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['MultipleLines'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "id": "38e8c060",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.575460Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.575002Z",
+     "iopub.status.idle": "2026-06-27T15:10:41.630485Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.629423Z"
+    },
+    "papermill": {
+     "duration": 0.073491,
+     "end_time": "2026-06-27T15:10:41.632511+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:41.559020+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "MultipleLines\n",
+       "No                  283384\n",
+       "Yes                 274509\n",
+       "No phone service     36301\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['MultipleLines'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "id": "8b203733",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.662191Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.661907Z",
+     "iopub.status.idle": "2026-06-27T15:10:41.723786Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.722461Z"
+    },
+    "papermill": {
+     "duration": 0.07961,
+     "end_time": "2026-06-27T15:10:41.726106+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:41.646496+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['MultipleLines'] = train['MultipleLines'].map({'Yes': 1, 'No': 0, 'No phone service': 0})\n",
+    "test['MultipleLines'] = test['MultipleLines'].map({'Yes': 1, 'No': 0, 'No phone service': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "id": "bcacfecc",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.757125Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.756133Z",
+     "iopub.status.idle": "2026-06-27T15:10:41.842202Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.841340Z"
+    },
+    "papermill": {
+     "duration": 0.104569,
+     "end_time": "2026-06-27T15:10:41.844687+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:41.740118+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count          594194\n",
+       "unique              3\n",
+       "top       Fiber optic\n",
+       "freq           272386\n",
+       "Name: InternetService, dtype: object"
+      ]
+     },
+     "execution_count": 38,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['InternetService'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "id": "b716b135",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.876193Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.875904Z",
+     "iopub.status.idle": "2026-06-27T15:10:41.913548Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.912620Z"
+    },
+    "papermill": {
+     "duration": 0.055796,
+     "end_time": "2026-06-27T15:10:41.915501+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:41.859705+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['DSL', 'Fiber optic', 'No'], dtype=object)"
+      ]
+     },
+     "execution_count": 39,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['InternetService'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "id": "026d82dd",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:41.946062Z",
+     "iopub.status.busy": "2026-06-27T15:10:41.945689Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.000147Z",
+     "shell.execute_reply": "2026-06-27T15:10:41.999426Z"
+    },
+    "papermill": {
+     "duration": 0.072849,
+     "end_time": "2026-06-27T15:10:42.002622+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:41.929773+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "InternetService\n",
+       "Fiber optic    272386\n",
+       "DSL            181081\n",
+       "No             140727\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 40,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['InternetService'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "24783153",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:42.038225Z",
+     "iopub.status.busy": "2026-06-27T15:10:42.037197Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.098264Z",
+     "shell.execute_reply": "2026-06-27T15:10:42.097115Z"
+    },
+    "papermill": {
+     "duration": 0.082916,
+     "end_time": "2026-06-27T15:10:42.100583+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:42.017667+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['InternetService'] = train['InternetService'].map({'No': 0, 'Fiber optic': 1, 'DSL': 2})\n",
+    "test['InternetService'] = test['InternetService'].map({'No': 0, 'Fiber optic': 1, 'DSL': 2})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "id": "822a0fac",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:42.133437Z",
+     "iopub.status.busy": "2026-06-27T15:10:42.133017Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.220788Z",
+     "shell.execute_reply": "2026-06-27T15:10:42.219675Z"
+    },
+    "papermill": {
+     "duration": 0.107875,
+     "end_time": "2026-06-27T15:10:42.222819+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:42.114944+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         3\n",
+       "top           No\n",
+       "freq      289474\n",
+       "Name: OnlineSecurity, dtype: object"
+      ]
+     },
+     "execution_count": 42,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['OnlineSecurity'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "id": "1cc1b3a0",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:42.254648Z",
+     "iopub.status.busy": "2026-06-27T15:10:42.253837Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.294015Z",
+     "shell.execute_reply": "2026-06-27T15:10:42.293016Z"
+    },
+    "papermill": {
+     "duration": 0.059018,
+     "end_time": "2026-06-27T15:10:42.296003+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:42.236985+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Yes', 'No', 'No internet service'], dtype=object)"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['OnlineSecurity'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "id": "15726c03",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:42.327199Z",
+     "iopub.status.busy": "2026-06-27T15:10:42.326820Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.382181Z",
+     "shell.execute_reply": "2026-06-27T15:10:42.381336Z"
+    },
+    "papermill": {
+     "duration": 0.073355,
+     "end_time": "2026-06-27T15:10:42.384106+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:42.310751+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "OnlineSecurity\n",
+       "No                     289474\n",
+       "Yes                    163993\n",
+       "No internet service    140727\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['OnlineSecurity'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "id": "a29ac080",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:42.416547Z",
+     "iopub.status.busy": "2026-06-27T15:10:42.416016Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.476803Z",
+     "shell.execute_reply": "2026-06-27T15:10:42.475795Z"
+    },
+    "papermill": {
+     "duration": 0.079436,
+     "end_time": "2026-06-27T15:10:42.479144+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:42.399708+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['OnlineSecurity'] = train['OnlineSecurity'].map({'Yes': 1, 'No': 0, 'No internet service': 0})\n",
+    "test['OnlineSecurity'] = test['OnlineSecurity'].map({'Yes': 1, 'No': 0, 'No internet service': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "id": "db9a97b8",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:42.514461Z",
+     "iopub.status.busy": "2026-06-27T15:10:42.514090Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.601689Z",
+     "shell.execute_reply": "2026-06-27T15:10:42.600519Z"
+    },
+    "papermill": {
+     "duration": 0.108902,
+     "end_time": "2026-06-27T15:10:42.604118+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:42.495216+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         3\n",
+       "top           No\n",
+       "freq      250083\n",
+       "Name: OnlineBackup, dtype: object"
+      ]
+     },
+     "execution_count": 46,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['OnlineBackup'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "id": "b292a56a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:42.637778Z",
+     "iopub.status.busy": "2026-06-27T15:10:42.637441Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.677099Z",
+     "shell.execute_reply": "2026-06-27T15:10:42.676011Z"
+    },
+    "papermill": {
+     "duration": 0.059702,
+     "end_time": "2026-06-27T15:10:42.679627+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:42.619925+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['No', 'Yes', 'No internet service'], dtype=object)"
+      ]
+     },
+     "execution_count": 47,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['OnlineBackup'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "id": "c89e557b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:42.713531Z",
+     "iopub.status.busy": "2026-06-27T15:10:42.713171Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.767172Z",
+     "shell.execute_reply": "2026-06-27T15:10:42.766309Z"
+    },
+    "papermill": {
+     "duration": 0.073526,
+     "end_time": "2026-06-27T15:10:42.769039+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:42.695513+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "OnlineBackup\n",
+       "No                     250083\n",
+       "Yes                    203384\n",
+       "No internet service    140727\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 48,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['OnlineBackup'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "id": "9f3d3807",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:42.805102Z",
+     "iopub.status.busy": "2026-06-27T15:10:42.803816Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.861507Z",
+     "shell.execute_reply": "2026-06-27T15:10:42.860375Z"
+    },
+    "papermill": {
+     "duration": 0.078578,
+     "end_time": "2026-06-27T15:10:42.863788+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:42.785210+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['OnlineBackup'] = train['OnlineBackup'].map({'Yes': 1, 'No': 0, 'No internet service': 0})\n",
+    "test['OnlineBackup'] = test['OnlineBackup'].map({'Yes': 1, 'No': 0, 'No internet service': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "id": "2c740fd5",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:42.895614Z",
+     "iopub.status.busy": "2026-06-27T15:10:42.895292Z",
+     "iopub.status.idle": "2026-06-27T15:10:42.989977Z",
+     "shell.execute_reply": "2026-06-27T15:10:42.989128Z"
+    },
+    "papermill": {
+     "duration": 0.113457,
+     "end_time": "2026-06-27T15:10:42.991785+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:42.878328+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         3\n",
+       "top           No\n",
+       "freq      247377\n",
+       "Name: DeviceProtection, dtype: object"
+      ]
+     },
+     "execution_count": 50,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['DeviceProtection'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "id": "768abf4b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.025463Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.025037Z",
+     "iopub.status.idle": "2026-06-27T15:10:43.071295Z",
+     "shell.execute_reply": "2026-06-27T15:10:43.070079Z"
+    },
+    "papermill": {
+     "duration": 0.066043,
+     "end_time": "2026-06-27T15:10:43.073743+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.007700+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Yes', 'No', 'No internet service'], dtype=object)"
+      ]
+     },
+     "execution_count": 51,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['DeviceProtection'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "id": "330d6c10",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.110769Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.110295Z",
+     "iopub.status.idle": "2026-06-27T15:10:43.168424Z",
+     "shell.execute_reply": "2026-06-27T15:10:43.167167Z"
+    },
+    "papermill": {
+     "duration": 0.079931,
+     "end_time": "2026-06-27T15:10:43.170653+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.090722+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "DeviceProtection\n",
+       "No                     247377\n",
+       "Yes                    206090\n",
+       "No internet service    140727\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 52,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['DeviceProtection'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "id": "6772864e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.216931Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.216517Z",
+     "iopub.status.idle": "2026-06-27T15:10:43.297653Z",
+     "shell.execute_reply": "2026-06-27T15:10:43.296259Z"
+    },
+    "papermill": {
+     "duration": 0.114259,
+     "end_time": "2026-06-27T15:10:43.299907+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.185648+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['DeviceProtection'] = train['DeviceProtection'].map({'Yes': 1, 'No': 0, 'No internet service': 0})\n",
+    "test['DeviceProtection'] = test['DeviceProtection'].map({'Yes': 1, 'No': 0, 'No internet service': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "id": "61b7c025",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.331666Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.331311Z",
+     "iopub.status.idle": "2026-06-27T15:10:43.419994Z",
+     "shell.execute_reply": "2026-06-27T15:10:43.418826Z"
+    },
+    "papermill": {
+     "duration": 0.107471,
+     "end_time": "2026-06-27T15:10:43.422078+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.314607+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         3\n",
+       "top           No\n",
+       "freq      288571\n",
+       "Name: TechSupport, dtype: object"
+      ]
+     },
+     "execution_count": 54,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['TechSupport'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "id": "a2957b71",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.455473Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.455052Z",
+     "iopub.status.idle": "2026-06-27T15:10:43.493787Z",
+     "shell.execute_reply": "2026-06-27T15:10:43.492879Z"
+    },
+    "papermill": {
+     "duration": 0.057353,
+     "end_time": "2026-06-27T15:10:43.495815+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.438462+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Yes', 'No', 'No internet service'], dtype=object)"
+      ]
+     },
+     "execution_count": 55,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['TechSupport'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "id": "7106ee45",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.529067Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.528689Z",
+     "iopub.status.idle": "2026-06-27T15:10:43.583870Z",
+     "shell.execute_reply": "2026-06-27T15:10:43.582864Z"
+    },
+    "papermill": {
+     "duration": 0.073744,
+     "end_time": "2026-06-27T15:10:43.585766+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.512022+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "TechSupport\n",
+       "No                     288571\n",
+       "Yes                    164896\n",
+       "No internet service    140727\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 56,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['TechSupport'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "id": "62238899",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.619120Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.618813Z",
+     "iopub.status.idle": "2026-06-27T15:10:43.677062Z",
+     "shell.execute_reply": "2026-06-27T15:10:43.675873Z"
+    },
+    "papermill": {
+     "duration": 0.077679,
+     "end_time": "2026-06-27T15:10:43.680036+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.602357+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['TechSupport'] = train['TechSupport'].map({'Yes': 1, 'No': 0, 'No internet service': 0})\n",
+    "test['TechSupport'] = test['TechSupport'].map({'Yes': 1, 'No': 0, 'No internet service': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "id": "d89af08b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.713818Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.713281Z",
+     "iopub.status.idle": "2026-06-27T15:10:43.799652Z",
+     "shell.execute_reply": "2026-06-27T15:10:43.798826Z"
+    },
+    "papermill": {
+     "duration": 0.106244,
+     "end_time": "2026-06-27T15:10:43.802112+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.695868+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         3\n",
+       "top          Yes\n",
+       "freq      240301\n",
+       "Name: StreamingTV, dtype: object"
+      ]
+     },
+     "execution_count": 58,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['StreamingTV'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "id": "e6182c85",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.834076Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.833776Z",
+     "iopub.status.idle": "2026-06-27T15:10:43.871715Z",
+     "shell.execute_reply": "2026-06-27T15:10:43.870744Z"
+    },
+    "papermill": {
+     "duration": 0.056633,
+     "end_time": "2026-06-27T15:10:43.873749+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.817116+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['No', 'Yes', 'No internet service'], dtype=object)"
+      ]
+     },
+     "execution_count": 59,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['StreamingTV'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "id": "065b5c91",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.906461Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.906052Z",
+     "iopub.status.idle": "2026-06-27T15:10:43.960400Z",
+     "shell.execute_reply": "2026-06-27T15:10:43.959327Z"
+    },
+    "papermill": {
+     "duration": 0.072961,
+     "end_time": "2026-06-27T15:10:43.962735+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.889774+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "StreamingTV\n",
+       "Yes                    240301\n",
+       "No                     213166\n",
+       "No internet service    140727\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 60,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['StreamingTV'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "id": "72458b7b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:43.996359Z",
+     "iopub.status.busy": "2026-06-27T15:10:43.996018Z",
+     "iopub.status.idle": "2026-06-27T15:10:44.055926Z",
+     "shell.execute_reply": "2026-06-27T15:10:44.055126Z"
+    },
+    "papermill": {
+     "duration": 0.080668,
+     "end_time": "2026-06-27T15:10:44.058786+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:43.978118+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['StreamingTV'] = train['StreamingTV'].map({'Yes': 1, 'No': 0, 'No internet service': 0})\n",
+    "test['StreamingTV'] = test['StreamingTV'].map({'Yes': 1, 'No': 0, 'No internet service': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 62,
+   "id": "28ea4831",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:44.093425Z",
+     "iopub.status.busy": "2026-06-27T15:10:44.092600Z",
+     "iopub.status.idle": "2026-06-27T15:10:44.179445Z",
+     "shell.execute_reply": "2026-06-27T15:10:44.178450Z"
+    },
+    "papermill": {
+     "duration": 0.106245,
+     "end_time": "2026-06-27T15:10:44.181573+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:44.075328+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         3\n",
+       "top          Yes\n",
+       "freq      241435\n",
+       "Name: StreamingMovies, dtype: object"
+      ]
+     },
+     "execution_count": 62,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['StreamingMovies'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "id": "650cb1b2",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:44.216349Z",
+     "iopub.status.busy": "2026-06-27T15:10:44.215857Z",
+     "iopub.status.idle": "2026-06-27T15:10:44.254329Z",
+     "shell.execute_reply": "2026-06-27T15:10:44.253180Z"
+    },
+    "papermill": {
+     "duration": 0.058228,
+     "end_time": "2026-06-27T15:10:44.256525+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:44.198297+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['No', 'Yes', 'No internet service'], dtype=object)"
+      ]
+     },
+     "execution_count": 63,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['StreamingMovies'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "id": "24a7e99e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:44.291386Z",
+     "iopub.status.busy": "2026-06-27T15:10:44.290964Z",
+     "iopub.status.idle": "2026-06-27T15:10:44.344824Z",
+     "shell.execute_reply": "2026-06-27T15:10:44.343826Z"
+    },
+    "papermill": {
+     "duration": 0.074078,
+     "end_time": "2026-06-27T15:10:44.347198+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:44.273120+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "StreamingMovies\n",
+       "Yes                    241435\n",
+       "No                     212032\n",
+       "No internet service    140727\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 64,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['StreamingMovies'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "id": "7a2532cc",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:44.381206Z",
+     "iopub.status.busy": "2026-06-27T15:10:44.380895Z",
+     "iopub.status.idle": "2026-06-27T15:10:44.439510Z",
+     "shell.execute_reply": "2026-06-27T15:10:44.438547Z"
+    },
+    "papermill": {
+     "duration": 0.077968,
+     "end_time": "2026-06-27T15:10:44.441606+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:44.363638+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['StreamingMovies'] = train['StreamingMovies'].map({'Yes': 1, 'No': 0, 'No internet service': 0})\n",
+    "test['StreamingMovies'] = test['StreamingMovies'].map({'Yes': 1, 'No': 0, 'No internet service': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "id": "66be53f6",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:44.477371Z",
+     "iopub.status.busy": "2026-06-27T15:10:44.476917Z",
+     "iopub.status.idle": "2026-06-27T15:10:44.562741Z",
+     "shell.execute_reply": "2026-06-27T15:10:44.561805Z"
+    },
+    "papermill": {
+     "duration": 0.105901,
+     "end_time": "2026-06-27T15:10:44.564657+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:44.458756+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count             594194\n",
+       "unique                 3\n",
+       "top       Month-to-month\n",
+       "freq              298918\n",
+       "Name: Contract, dtype: object"
+      ]
+     },
+     "execution_count": 66,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Contract'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "id": "43a7ae5e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:44.599018Z",
+     "iopub.status.busy": "2026-06-27T15:10:44.598208Z",
+     "iopub.status.idle": "2026-06-27T15:10:44.640463Z",
+     "shell.execute_reply": "2026-06-27T15:10:44.639364Z"
+    },
+    "papermill": {
+     "duration": 0.062031,
+     "end_time": "2026-06-27T15:10:44.642747+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:44.580716+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['One year', 'Two year', 'Month-to-month'], dtype=object)"
+      ]
+     },
+     "execution_count": 67,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Contract'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "id": "2981c5a9",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:44.681867Z",
+     "iopub.status.busy": "2026-06-27T15:10:44.680551Z",
+     "iopub.status.idle": "2026-06-27T15:10:44.736766Z",
+     "shell.execute_reply": "2026-06-27T15:10:44.735446Z"
+    },
+    "papermill": {
+     "duration": 0.07797,
+     "end_time": "2026-06-27T15:10:44.739311+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:44.661341+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Contract\n",
+       "Month-to-month    298918\n",
+       "Two year          186943\n",
+       "One year          108333\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 68,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Contract'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 69,
+   "id": "e6f1978e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:44.775476Z",
+     "iopub.status.busy": "2026-06-27T15:10:44.773894Z",
+     "iopub.status.idle": "2026-06-27T15:10:44.839942Z",
+     "shell.execute_reply": "2026-06-27T15:10:44.838700Z"
+    },
+    "papermill": {
+     "duration": 0.08777,
+     "end_time": "2026-06-27T15:10:44.842563+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:44.754793+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['Contract'] = train['Contract'].map({'Month-to-month': 0, 'One year': 1, 'Two year': 2})\n",
+    "test['Contract'] = test['Contract'].map({'Month-to-month': 0, 'One year': 1, 'Two year': 2})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "id": "aad5740f",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:44.878464Z",
+     "iopub.status.busy": "2026-06-27T15:10:44.877899Z",
+     "iopub.status.idle": "2026-06-27T15:10:44.966820Z",
+     "shell.execute_reply": "2026-06-27T15:10:44.965904Z"
+    },
+    "papermill": {
+     "duration": 0.108918,
+     "end_time": "2026-06-27T15:10:44.968712+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:44.859794+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         2\n",
+       "top          Yes\n",
+       "freq      365579\n",
+       "Name: PaperlessBilling, dtype: object"
+      ]
+     },
+     "execution_count": 70,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['PaperlessBilling'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 71,
+   "id": "a38af095",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.003193Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.002873Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.038959Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.036794Z"
+    },
+    "papermill": {
+     "duration": 0.055738,
+     "end_time": "2026-06-27T15:10:45.041485+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:44.985747+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Yes', 'No'], dtype=object)"
+      ]
+     },
+     "execution_count": 71,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['PaperlessBilling'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "id": "5da1ffc7",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.080936Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.080573Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.135679Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.134655Z"
+    },
+    "papermill": {
+     "duration": 0.077243,
+     "end_time": "2026-06-27T15:10:45.138017+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.060774+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "PaperlessBilling\n",
+       "Yes    365579\n",
+       "No     228615\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 72,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['PaperlessBilling'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "id": "fe4a5b69",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.176578Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.176253Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.234961Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.233302Z"
+    },
+    "papermill": {
+     "duration": 0.07962,
+     "end_time": "2026-06-27T15:10:45.237345+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.157725+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['PaperlessBilling'] = train['PaperlessBilling'].map({'Yes': 1, 'No': 0})\n",
+    "test['PaperlessBilling'] = test['PaperlessBilling'].map({'Yes': 1, 'No': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "id": "dbef8c3c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.276333Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.275308Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.361979Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.360892Z"
+    },
+    "papermill": {
+     "duration": 0.108022,
+     "end_time": "2026-06-27T15:10:45.364342+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.256320+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count               594194\n",
+       "unique                   4\n",
+       "top       Electronic check\n",
+       "freq                215372\n",
+       "Name: PaymentMethod, dtype: object"
+      ]
+     },
+     "execution_count": 74,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['PaymentMethod'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 75,
+   "id": "4e5479f7",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.402222Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.401913Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.447154Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.445967Z"
+    },
+    "papermill": {
+     "duration": 0.066865,
+     "end_time": "2026-06-27T15:10:45.449308+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.382443+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Mailed check', 'Credit card (automatic)', 'Electronic check',\n",
+       "       'Bank transfer (automatic)'], dtype=object)"
+      ]
+     },
+     "execution_count": 75,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['PaymentMethod'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 76,
+   "id": "a89c625d",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.485130Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.484830Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.542371Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.540771Z"
+    },
+    "papermill": {
+     "duration": 0.079631,
+     "end_time": "2026-06-27T15:10:45.545734+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.466103+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "PaymentMethod\n",
+       "Electronic check             215372\n",
+       "Credit card (automatic)      133705\n",
+       "Mailed check                 123757\n",
+       "Bank transfer (automatic)    121360\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 76,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['PaymentMethod'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 77,
+   "id": "6ffbf097",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.581994Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.581702Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.663482Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.662213Z"
+    },
+    "papermill": {
+     "duration": 0.101729,
+     "end_time": "2026-06-27T15:10:45.665896+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.564167+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['PaymentMethod'] = train['PaymentMethod'].map({'Electronic check': 1, 'Mailed check': 2, 'Credit card (automatic)': 3, 'Bank transfer (automatic)': 4})\n",
+    "test['PaymentMethod'] = test['PaymentMethod'].map({'Electronic check': 1, 'Mailed check': 2, 'Credit card (automatic)': 3, 'Bank transfer (automatic)': 4})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 78,
+   "id": "ca6ca4b1",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.702153Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.701855Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.733223Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.732366Z"
+    },
+    "papermill": {
+     "duration": 0.052547,
+     "end_time": "2026-06-27T15:10:45.735215+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.682668+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count    594194.000000\n",
+       "mean         65.866223\n",
+       "std          31.067444\n",
+       "min          18.250000\n",
+       "25%          29.900000\n",
+       "50%          74.100000\n",
+       "75%          90.800000\n",
+       "max         118.750000\n",
+       "Name: MonthlyCharges, dtype: float64"
+      ]
+     },
+     "execution_count": 78,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['MonthlyCharges'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "id": "2cbdfabb",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.776341Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.775974Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.790732Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.789391Z"
+    },
+    "papermill": {
+     "duration": 0.037115,
+     "end_time": "2026-06-27T15:10:45.793275+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.756160+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([ 60.1 ,  69.5 , 100.4 , ...,  18.45, 112.05,  46.15], shape=(1921,))"
+      ]
+     },
+     "execution_count": 79,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['MonthlyCharges'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 80,
+   "id": "f5326a94",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.829446Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.829035Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.849710Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.848443Z"
+    },
+    "papermill": {
+     "duration": 0.041541,
+     "end_time": "2026-06-27T15:10:45.852469+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.810928+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "MonthlyCharges\n",
+       "20.05    7436\n",
+       "19.95    5718\n",
+       "19.70    5705\n",
+       "20.00    5493\n",
+       "19.85    5114\n",
+       "         ... \n",
+       "32.45       1\n",
+       "31.30       1\n",
+       "89.24       1\n",
+       "21.70       1\n",
+       "46.15       1\n",
+       "Name: count, Length: 1921, dtype: int64"
+      ]
+     },
+     "execution_count": 80,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['MonthlyCharges'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 81,
+   "id": "e062107b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.890291Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.889714Z",
+     "iopub.status.idle": "2026-06-27T15:10:45.959515Z",
+     "shell.execute_reply": "2026-06-27T15:10:45.957942Z"
+    },
+    "papermill": {
+     "duration": 0.091501,
+     "end_time": "2026-06-27T15:10:45.962112+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.870611+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['MonthlyCharges'] = pd.qcut(train['MonthlyCharges'], q = 4, labels=[1, 2, 3, 4])\n",
+    "test['MonthlyCharges'] = pd.qcut(test['MonthlyCharges'], q = 4, labels=[1, 2, 3, 4])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 82,
+   "id": "98d4a903",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:45.997384Z",
+     "iopub.status.busy": "2026-06-27T15:10:45.996468Z",
+     "iopub.status.idle": "2026-06-27T15:10:46.027828Z",
+     "shell.execute_reply": "2026-06-27T15:10:46.026888Z"
+    },
+    "papermill": {
+     "duration": 0.05145,
+     "end_time": "2026-06-27T15:10:46.029889+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:45.978439+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count    594194.000000\n",
+       "mean       2494.377057\n",
+       "std        2353.916710\n",
+       "min          18.800000\n",
+       "25%         639.650000\n",
+       "50%        1433.650000\n",
+       "75%        4263.800000\n",
+       "max        8684.800000\n",
+       "Name: TotalCharges, dtype: float64"
+      ]
+     },
+     "execution_count": 82,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['TotalCharges'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 83,
+   "id": "7d3f2615",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:46.069796Z",
+     "iopub.status.busy": "2026-06-27T15:10:46.069414Z",
+     "iopub.status.idle": "2026-06-27T15:10:46.088993Z",
+     "shell.execute_reply": "2026-06-27T15:10:46.087494Z"
+    },
+    "papermill": {
+     "duration": 0.042301,
+     "end_time": "2026-06-27T15:10:46.091342+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:46.049041+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([1653.85, 3778.2 , 5841.35, ..., 1478.9 , 1284.75, 5460.7 ],\n",
+       "      shape=(31910,))"
+      ]
+     },
+     "execution_count": 83,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['TotalCharges'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 84,
+   "id": "5e07a573",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:46.129362Z",
+     "iopub.status.busy": "2026-06-27T15:10:46.128731Z",
+     "iopub.status.idle": "2026-06-27T15:10:46.155786Z",
+     "shell.execute_reply": "2026-06-27T15:10:46.154735Z"
+    },
+    "papermill": {
+     "duration": 0.049041,
+     "end_time": "2026-06-27T15:10:46.157969+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:46.108928+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "TotalCharges\n",
+       "6096.90    850\n",
+       "1110.05    846\n",
+       "6448.05    734\n",
+       "854.90     721\n",
+       "7133.25    619\n",
+       "          ... \n",
+       "5928.95      1\n",
+       "5813.20      1\n",
+       "2813.55      1\n",
+       "3238.80      1\n",
+       "157.25       1\n",
+       "Name: count, Length: 31910, dtype: int64"
+      ]
+     },
+     "execution_count": 84,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['TotalCharges'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 85,
+   "id": "da7ede4e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:46.196191Z",
+     "iopub.status.busy": "2026-06-27T15:10:46.194356Z",
+     "iopub.status.idle": "2026-06-27T15:10:46.260933Z",
+     "shell.execute_reply": "2026-06-27T15:10:46.259855Z"
+    },
+    "papermill": {
+     "duration": 0.088027,
+     "end_time": "2026-06-27T15:10:46.263957+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:46.175930+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['TotalCharges'] = pd.qcut(train['TotalCharges'], q = 4, labels=[1, 2, 3, 4])\n",
+    "test['TotalCharges'] = pd.qcut(test['TotalCharges'], q = 4, labels=[1, 2, 3, 4])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 86,
+   "id": "7492c369",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:46.301102Z",
+     "iopub.status.busy": "2026-06-27T15:10:46.300794Z",
+     "iopub.status.idle": "2026-06-27T15:10:46.389245Z",
+     "shell.execute_reply": "2026-06-27T15:10:46.388359Z"
+    },
+    "papermill": {
+     "duration": 0.110241,
+     "end_time": "2026-06-27T15:10:46.392052+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:46.281811+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count     594194\n",
+       "unique         2\n",
+       "top           No\n",
+       "freq      460377\n",
+       "Name: Churn, dtype: object"
+      ]
+     },
+     "execution_count": 86,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Churn'].describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 87,
+   "id": "5286ca1a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:46.428409Z",
+     "iopub.status.busy": "2026-06-27T15:10:46.428039Z",
+     "iopub.status.idle": "2026-06-27T15:10:46.463020Z",
+     "shell.execute_reply": "2026-06-27T15:10:46.461692Z"
+    },
+    "papermill": {
+     "duration": 0.056585,
+     "end_time": "2026-06-27T15:10:46.465970+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:46.409385+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['No', 'Yes'], dtype=object)"
+      ]
+     },
+     "execution_count": 87,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Churn'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 88,
+   "id": "92abe97b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:46.506200Z",
+     "iopub.status.busy": "2026-06-27T15:10:46.505894Z",
+     "iopub.status.idle": "2026-06-27T15:10:46.561546Z",
+     "shell.execute_reply": "2026-06-27T15:10:46.560142Z"
+    },
+    "papermill": {
+     "duration": 0.078845,
+     "end_time": "2026-06-27T15:10:46.563468+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:46.484623+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Churn\n",
+       "No     460377\n",
+       "Yes    133817\n",
+       "Name: count, dtype: int64"
+      ]
+     },
+     "execution_count": 88,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train['Churn'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 89,
+   "id": "d0c59605",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:46.602399Z",
+     "iopub.status.busy": "2026-06-27T15:10:46.602019Z",
+     "iopub.status.idle": "2026-06-27T15:10:46.658369Z",
+     "shell.execute_reply": "2026-06-27T15:10:46.657203Z"
+    },
+    "papermill": {
+     "duration": 0.077805,
+     "end_time": "2026-06-27T15:10:46.660680+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:46.582875+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train['Churn'] = train['Churn'].map({'Yes': 1, 'No': 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 90,
+   "id": "851ec058",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:46.698606Z",
+     "iopub.status.busy": "2026-06-27T15:10:46.697902Z",
+     "iopub.status.idle": "2026-06-27T15:10:46.721133Z",
+     "shell.execute_reply": "2026-06-27T15:10:46.720287Z"
+    },
+    "papermill": {
+     "duration": 0.045685,
+     "end_time": "2026-06-27T15:10:46.723099+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:46.677414+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Gender</th>\n",
+       "      <th>SeniorCitizen</th>\n",
+       "      <th>Partner</th>\n",
+       "      <th>Dependents</th>\n",
+       "      <th>Tenure</th>\n",
+       "      <th>PhoneService</th>\n",
+       "      <th>MultipleLines</th>\n",
+       "      <th>InternetService</th>\n",
+       "      <th>OnlineSecurity</th>\n",
+       "      <th>OnlineBackup</th>\n",
+       "      <th>DeviceProtection</th>\n",
+       "      <th>TechSupport</th>\n",
+       "      <th>StreamingTV</th>\n",
+       "      <th>StreamingMovies</th>\n",
+       "      <th>Contract</th>\n",
+       "      <th>PaperlessBilling</th>\n",
+       "      <th>PaymentMethod</th>\n",
+       "      <th>MonthlyCharges</th>\n",
+       "      <th>TotalCharges</th>\n",
+       "      <th>Churn</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>3</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>5</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>2</td>\n",
+       "      <td>3</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>5</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>594189</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>5</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>594190</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>6</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>594191</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>6</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>594192</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>3</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>594193</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>594194 rows × 20 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "        Gender  SeniorCitizen  Partner  Dependents Tenure  PhoneService  \\\n",
+       "0            0              0        1           1      3             1   \n",
+       "1            0              0        1           1      5             1   \n",
+       "2            0              0        1           0      5             1   \n",
+       "3            1              0        0           0      1             1   \n",
+       "4            1              0        0           0      1             1   \n",
+       "...        ...            ...      ...         ...    ...           ...   \n",
+       "594189       0              0        0           0      5             1   \n",
+       "594190       1              0        0           0      6             1   \n",
+       "594191       1              0        1           0      6             1   \n",
+       "594192       1              0        0           0      3             1   \n",
+       "594193       1              1        1           0      1             1   \n",
+       "\n",
+       "        MultipleLines  InternetService  OnlineSecurity  OnlineBackup  \\\n",
+       "0                   0                2               1             0   \n",
+       "1                   0                2               1             1   \n",
+       "2                   1                1               0             1   \n",
+       "3                   0                1               0             0   \n",
+       "4                   0                1               0             0   \n",
+       "...               ...              ...             ...           ...   \n",
+       "594189              1                1               0             0   \n",
+       "594190              1                2               1             1   \n",
+       "594191              1                0               0             0   \n",
+       "594192              1                1               0             0   \n",
+       "594193              0                2               0             0   \n",
+       "\n",
+       "        DeviceProtection  TechSupport  StreamingTV  StreamingMovies  Contract  \\\n",
+       "0                      1            1            0                0         1   \n",
+       "1                      0            1            1                0         2   \n",
+       "2                      0            0            1                1         0   \n",
+       "3                      0            0            0                0         0   \n",
+       "4                      0            0            0                0         0   \n",
+       "...                  ...          ...          ...              ...       ...   \n",
+       "594189                 1            0            1                1         2   \n",
+       "594190                 1            1            1                1         2   \n",
+       "594191                 0            0            0                0         2   \n",
+       "594192                 0            0            0                1         0   \n",
+       "594193                 0            0            1                0         0   \n",
+       "\n",
+       "        PaperlessBilling  PaymentMethod MonthlyCharges TotalCharges  Churn  \n",
+       "0                      1              2              2            3      0  \n",
+       "1                      0              3              2            3      0  \n",
+       "2                      1              1              4            4      0  \n",
+       "3                      1              1              2            1      1  \n",
+       "4                      1              1              2            1      1  \n",
+       "...                  ...            ...            ...          ...    ...  \n",
+       "594189                 0              4              4            4      0  \n",
+       "594190                 0              4              4            4      0  \n",
+       "594191                 0              3              1            3      0  \n",
+       "594192                 1              1              3            3      0  \n",
+       "594193                 1              1              2            1      1  \n",
+       "\n",
+       "[594194 rows x 20 columns]"
+      ]
+     },
+     "execution_count": 90,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 91,
+   "id": "f9b588f4",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:46.762218Z",
+     "iopub.status.busy": "2026-06-27T15:10:46.761839Z",
+     "iopub.status.idle": "2026-06-27T15:10:46.782113Z",
+     "shell.execute_reply": "2026-06-27T15:10:46.781196Z"
+    },
+    "papermill": {
+     "duration": 0.042546,
+     "end_time": "2026-06-27T15:10:46.784216+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:46.741670+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Gender</th>\n",
+       "      <th>SeniorCitizen</th>\n",
+       "      <th>Partner</th>\n",
+       "      <th>Dependents</th>\n",
+       "      <th>Tenure</th>\n",
+       "      <th>PhoneService</th>\n",
+       "      <th>MultipleLines</th>\n",
+       "      <th>InternetService</th>\n",
+       "      <th>OnlineSecurity</th>\n",
+       "      <th>OnlineBackup</th>\n",
+       "      <th>DeviceProtection</th>\n",
+       "      <th>TechSupport</th>\n",
+       "      <th>StreamingTV</th>\n",
+       "      <th>StreamingMovies</th>\n",
+       "      <th>Contract</th>\n",
+       "      <th>PaperlessBilling</th>\n",
+       "      <th>PaymentMethod</th>\n",
+       "      <th>MonthlyCharges</th>\n",
+       "      <th>TotalCharges</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>6</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>6</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>4</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>6</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>3</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>254650</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>6</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>254651</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>254652</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>254653</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>254654</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>3</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>254655 rows × 19 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "        Gender  SeniorCitizen  Partner  Dependents Tenure  PhoneService  \\\n",
+       "0            1              0        1           0      6             1   \n",
+       "1            1              0        1           0      6             1   \n",
+       "2            0              0        0           0      1             1   \n",
+       "3            0              0        1           1      6             1   \n",
+       "4            1              0        0           0      2             1   \n",
+       "...        ...            ...      ...         ...    ...           ...   \n",
+       "254650       0              0        1           1      6             1   \n",
+       "254651       0              1        1           0      2             1   \n",
+       "254652       0              0        1           0      3             1   \n",
+       "254653       1              0        0           0      3             1   \n",
+       "254654       1              0        0           0      2             1   \n",
+       "\n",
+       "        MultipleLines  InternetService  OnlineSecurity  OnlineBackup  \\\n",
+       "0                   1                1               1             1   \n",
+       "1                   0                0               0             0   \n",
+       "2                   0                2               1             1   \n",
+       "3                   1                2               1             0   \n",
+       "4                   0                1               1             0   \n",
+       "...               ...              ...             ...           ...   \n",
+       "254650              0                0               0             0   \n",
+       "254651              1                1               0             0   \n",
+       "254652              1                1               1             0   \n",
+       "254653              0                0               0             0   \n",
+       "254654              1                1               0             0   \n",
+       "\n",
+       "        DeviceProtection  TechSupport  StreamingTV  StreamingMovies  Contract  \\\n",
+       "0                      1            1            1                1         2   \n",
+       "1                      0            0            0                0         2   \n",
+       "2                      0            0            0                0         0   \n",
+       "3                      1            1            1                1         2   \n",
+       "4                      0            0            1                1         0   \n",
+       "...                  ...          ...          ...              ...       ...   \n",
+       "254650                 0            0            0                0         2   \n",
+       "254651                 0            1            1                1         0   \n",
+       "254652                 1            1            1                1         0   \n",
+       "254653                 0            0            0                0         2   \n",
+       "254654                 1            0            1                0         0   \n",
+       "\n",
+       "        PaperlessBilling  PaymentMethod MonthlyCharges TotalCharges  \n",
+       "0                      1              1              4            4  \n",
+       "1                      0              4              1            2  \n",
+       "2                      1              4              2            1  \n",
+       "3                      0              3              3            4  \n",
+       "4                      0              1              3            2  \n",
+       "...                  ...            ...            ...          ...  \n",
+       "254650                 0              3              1            2  \n",
+       "254651                 1              1              4            3  \n",
+       "254652                 1              4              4            3  \n",
+       "254653                 1              3              1            1  \n",
+       "254654                 1              3              3            3  \n",
+       "\n",
+       "[254655 rows x 19 columns]"
+      ]
+     },
+     "execution_count": 91,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "test"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 92,
+   "id": "f3a78dd3",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2026-06-27T15:10:46.820813Z",
+     "iopub.status.busy": "2026-06-27T15:10:46.820505Z",
+     "iopub.status.idle": "2026-06-27T15:10:50.574676Z",
+     "shell.execute_reply": "2026-06-27T15:10:50.573327Z"
+    },
+    "papermill": {
+     "duration": 3.775037,
+     "end_time": "2026-06-27T15:10:50.576984+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:46.801947+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "train.to_csv('train.csv', index = False)\n",
+    "test.to_csv('test.csv', index = False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2df6e9d5",
+   "metadata": {
+    "papermill": {
+     "duration": 0.017472,
+     "end_time": "2026-06-27T15:10:50.615532+00:00",
+     "exception": false,
+     "start_time": "2026-06-27T15:10:50.598060+00:00",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kaggle": {
+   "accelerator": "none",
+   "dataSources": [],
+   "dockerImageVersionId": 28755,
+   "isGpuEnabled": false,
+   "isInternetEnabled": false,
+   "language": "python",
+   "sourceType": "notebook"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.12.13"
+  },
+  "papermill": {
+   "default_parameters": {},
+   "duration": 22.025164,
+   "end_time": "2026-06-27T15:10:51.259903+00:00",
+   "environment_variables": {},
+   "exception": null,
+   "input_path": "__notebook__.ipynb",
+   "output_path": "__notebook__.ipynb",
+   "parameters": {},
+   "start_time": "2026-06-27T15:10:29.234739+00:00",
+   "version": "2.7.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
